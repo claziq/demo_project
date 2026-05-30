@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-df = pd.read_excel('data/raw/Diabetes data CLAZIQ.xlsx')
+df = pd.read_excel('../data/raw/Diabetes data CLAZIQ.xlsx')
 
 
 def get_rid_fake_zero(df, column_name):
