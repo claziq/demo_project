@@ -9,7 +9,6 @@ if ROOT_DIR not in sys.path:
 
 
 def train_model():
-    # isort: skip # pylint: disable=wrong-import-position
     from notebooks.notebook3 import X_train_b, Y_train
     best_fit_theta = np.linalg.inv(X_train_b.T.dot(
         X_train_b)).dot(X_train_b.T).dot(Y_train)
