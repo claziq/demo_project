@@ -1,11 +1,15 @@
 import pandas as pd
 import numpy as np
+import os
 
 # setting a random seed
 np.random.seed(42)
 
 # Loading the dataset
-diabetes_df = pd.read_excel('../data/raw/Diabetes data CLAZIQ.xlsx')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(BASE_DIR, '..', 'data', 'raw',
+                         'Diabetes data CLAZIQ.xlsx')
+diabetes_df = pd.read_excel(file_path)
 
 # Columns are loaded and made into pandas dataframe
 columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
@@ -42,8 +46,8 @@ x_df = diabetes_df.iloc[:, :8]
 y_df = diabetes_df.iloc[:, 8:9]
 
 # Writing the split into seperate files
-x_df.to_excel('features_data.xlsx', index=False)
-y_df.to_excel('target_data.xlsx', index=False)
+# x_df.to_excel('features_data.xlsx', index=False)
+# y_df.to_excel('target_data.xlsx', index=False)
 print("Feature and target saved to different file.")
 
 # Converting the pandas dataframe into numpy array
