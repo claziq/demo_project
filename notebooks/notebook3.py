@@ -14,9 +14,9 @@ np.random.seed(42)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, '..', 'data', 'raw',
                          'Diabetes data CLAZIQ.xlsx')
-diabetes_df = pd.read_excel(file_path)
 
 # Columns are loaded and made into pandas dataframe
+diabetes_df = pd.read_excel(file_path)
 columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
            'Insulin', 'DiabetesPedigreeFunction', 'Age', 'BMI', 'Outcome']
 diabetes_df = pd.DataFrame(diabetes_df, columns=columns)
@@ -74,8 +74,8 @@ X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
 # Adding the intercept
-X_train_b = np.c_[np.ones((len(X_train_scaled), 1)), X_train]
-X_test_b = np.c_[np.ones((len(X_test_scaled), 1)), X_test]
+X_train_b = np.c_[np.ones((len(X_train_scaled), 1)), X_train_scaled]
+X_test_b = np.c_[np.ones((len(X_test_scaled), 1)), X_test_scaled]
 
 # Fitting the model to normal equation
 best_fit_theta = np.linalg.inv(X_train_b.T.dot(
