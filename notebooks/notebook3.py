@@ -37,9 +37,9 @@ print("Zeros replaced with column mean.")
 feature_cols = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
                 'Insulin', 'DiabetesPedigreeFunction', 'Age', 'BMI']
 
-for col in feature_cols:
-    diabetes_df[col] = (diabetes_df[col] -
-                        diabetes_df[col].mean() / diabetes_df[col].std())
+# for col in feature_cols:
+#     diabetes_df[col] = (diabetes_df[col] -
+#                         diabetes_df[col].mean() / diabetes_df[col].std())
 
 # Splitting my dataset to seperate the target from the features
 x_df = diabetes_df.iloc[:, :8]
@@ -99,10 +99,12 @@ X_test_b = np.c_[np.ones((len(X_test), 1)), X_test]
 # setting hyperparameters for gradient descent
 learning_rate = 0.01
 iterations = 1000
+Y_train = Y_train.reshape(-1)
 m = len(Y_train)
 
 # Initializing the coefficient to zero
 theta = np.zeros(X_train_b.shape[1])
+
 
 # Loop to upgrade coefficients gradually
 for i in range(iterations):
@@ -114,7 +116,7 @@ for i in range(iterations):
     gradient = np.dot(X_train_b.T, (predictions - Y_train)) / m
 
     # we have to update the coefficient by taking a step in the opposite direction of the gradinet
-    # theta -= learning_rate * gradient
+    theta -= learning_rate * gradient
 
 
 # get the probability for the test
@@ -122,11 +124,10 @@ test_linear_model = np.dot(X_test_b, theta)
 test_probabilities = sigmoid(test_linear_model)
 
 # convert probabilities to strict 0 and 1 predictions
-final_prediction = [1 if prob >= 0.5 else 0 for prob in test_probabilities]
+final_prediction = (test_probabilities >= 0.5).astype(int)
 
 # checking for the acuracy using Accuracy(percentage correct)
-correct_prediction = np.sum(final_prediction == Y_test)
-accuracy = correct_prediction / len(Y_test)
+accuracy = np.mean(final_prediction == Y_test)
 
 print("Logit regression model trained via Gradient descent.")
 print(f"-> Calculated Coefficients {theta}")
