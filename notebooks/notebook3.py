@@ -1,3 +1,6 @@
+from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
 import os
@@ -64,9 +67,13 @@ train_indices = indices[test_size:]
 X_train, X_test = x[train_indices], x[test_indices]
 Y_train, Y_test = y[train_indices], y[test_indices]
 
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
 # Adding the intercept
-X_train_b = np.c_[np.ones((len(X_train), 1)), X_train]
-X_test_b = np.c_[np.ones((len(X_test), 1)), X_test]
+X_train_b = np.c_[np.ones((len(X_train_scaled), 1)), X_train]
+X_test_b = np.c_[np.ones((len(X_test_scaled), 1)), X_test]
 
 # Fitting the model to normal equation
 best_fit_theta = np.linalg.inv(X_train_b.T.dot(
@@ -98,8 +105,8 @@ X_test_b = np.c_[np.ones((len(X_test), 1)), X_test]
 
 
 # setting hyperparameters for gradient descent
-learning_rate = 0.01
-iterations = 1000
+learning_rate = 0.001
+iterations = 5000
 Y_train = Y_train.reshape(-1)
 m = len(Y_train)
 
@@ -132,4 +139,18 @@ accuracy = np.mean(final_prediction == Y_test)
 
 print("Logit regression model trained via Gradient descent.")
 print(f"-> Calculated Coefficients {theta}")
-print(f"-> Model Accuracy {accuracy * 100:.3f}%")
+print(f"-> Model Accuracy {accuracy * 100:.4f}%")
+
+
+# Random forest model
+print("This is the beginning of random forest!")
+
+
+randfor_model = RandomForestClassifier(n_estimators=100, random_state=42)
+randfor_model.fit(X_train, Y_train.flatten())
+
+randfor_predictions = randfor_model.predict(X_test)
+
+randfor_accuracy = accuracy_score(Y_test.flatten(), randfor_predictions) * 100
+
+print(f"Random Forest Model Accuracy: {randfor_accuracy:.3f}%")
