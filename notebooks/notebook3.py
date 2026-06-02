@@ -1,3 +1,4 @@
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
@@ -89,7 +90,7 @@ mse = np.mean((Y_test - predictions) ** 2)
 
 print("Regression model trained from scratch")
 print(f"-> Calculated the coefficient: {best_fit_theta}")
-print(f"-> Mean Square Error: {mse:.2f}")
+print(f"-> Mean Square Error: {mse:.3f}")
 
 
 # logit beginning
@@ -140,7 +141,7 @@ accuracy = np.mean(final_prediction == Y_test)
 
 print("Logit regression model trained via Gradient descent.")
 print(f"-> Calculated Coefficients {theta}")
-print(f"-> Model Accuracy {accuracy * 100:.4f}%")
+print(f"-> Model Accuracy {accuracy * 100:.3f}%")
 
 
 # Random forest model
@@ -172,3 +173,17 @@ randfor_accuracy = accuracy_score(Y_test.flatten(), randfor_predictions) * 100
 
 print(f"Best Parameters: {best_tuned_params}")
 print(f"Random Forest Model Accuracy: {randfor_accuracy:.3f}%")
+
+
+print("This is the beginning of gradient boosting")
+grad_boosting_model = HistGradientBoostingClassifier(
+    random_state=84, max_iter=100)
+
+grad_boosting_model.fit(X_train, Y_train.flatten())
+
+
+grad_boost_predict = grad_boosting_model.predict(X_test)
+grad_boost_accuracy = accuracy_score(
+    Y_test.flatten(), grad_boost_predict) * 100
+
+print(f"Gradient Boosting Accuracy Score: {grad_boost_accuracy:.3f}%")
