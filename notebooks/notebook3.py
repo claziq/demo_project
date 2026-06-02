@@ -39,7 +39,7 @@ for col in columns_to_fix:
 print("Zeros replaced with column mean.")
 
 # Standardizing each column using Z-score
-feature_cols = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
+feature_cols = ['Pregnancies', 'Glucose', 'BloodPressure',
                 'Insulin', 'DiabetesPedigreeFunction', 'Age', 'BMI']
 
 # for col in feature_cols:
@@ -47,7 +47,7 @@ feature_cols = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
 #                         diabetes_df[col].mean() / diabetes_df[col].std())
 
 # Splitting my dataset to seperate the target from the features
-x_df = diabetes_df.iloc[:, :8]
+x_df = diabetes_df.iloc[:, :7]
 y_df = diabetes_df.iloc[:, 8:9]
 
 # Writing the split into seperate files
