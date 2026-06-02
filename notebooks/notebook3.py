@@ -1,3 +1,4 @@
+from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
@@ -146,11 +147,28 @@ print(f"-> Model Accuracy {accuracy * 100:.4f}%")
 print("This is the beginning of random forest!")
 
 
-randfor_model = RandomForestClassifier(n_estimators=100, random_state=42)
-randfor_model.fit(X_train, Y_train.flatten())
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [10, 20, None],
+    'min_samples_split': [2, 5, 10]
+}
 
-randfor_predictions = randfor_model.predict(X_test)
+best_randfor_model = GridSearchCV(
+    estimator=RandomForestClassifier(random_state=84),
+    param_grid=param_grid,
+    cv=5,
+    n_jobs=-1
+)
+
+# randfor_model = RandomForestClassifier(n_estimators=100, random_state=84)
+best_randfor_model.fit(X_train, Y_train.flatten())
+
+best_tuned_params = best_randfor_model.best_params_
+
+best = best_randfor_model.best_estimator_
+randfor_predictions = best_randfor_model.predict(X_test)
 
 randfor_accuracy = accuracy_score(Y_test.flatten(), randfor_predictions) * 100
 
+print(f"Best Parameters: {best_tuned_params}")
 print(f"Random Forest Model Accuracy: {randfor_accuracy:.3f}%")
