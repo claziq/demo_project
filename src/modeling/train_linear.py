@@ -3,7 +3,7 @@ from src.data_processing import data_cleaning
 
 
 def main():
-    X_train_scaled, X_test_scaled, Y_train, Y_test = data_cleaning()
+    X_test_scaled, X_train_scaled, Y_train, Y_test = data_cleaning()
 
     X_train_b = np.c_[np.ones((len(X_train_scaled), 1)), X_train_scaled]
     X_test_b = np.c_[np.ones((len(X_test_scaled), 1)), X_test_scaled]
@@ -21,5 +21,5 @@ def main():
     print(f"-> Mean Square Error: {mse:.3f}")
 
 
-if __name__ "__main__":
+if __name__ == "__main__":
     main()
