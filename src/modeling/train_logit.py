@@ -8,22 +8,23 @@ def sigmoid(z):
 
 
 def main():
-    X_train_scaled, X_test_scaled, Y_train, Y_test = data_cleaning()
+    X_test_scaled, X_train_scaled, Y_train, Y_test = data_cleaning()
 
     Y_train = Y_train.reshape(-1, 1)
     Y_test = Y_test.reshape(-1, 1)
 
-    X_train_b = np.c_[np.ones((len(X_train), 1)), X_train]
-    X_test_b = np.c_[np.ones((len(X_test), 1)), X_test]
+    X_train_b = np.c_[np.ones((len(X_train_scaled), 1)), X_train_scaled]
+    X_test_b = np.c_[np.ones((len(X_test_scaled), 1)), X_test_scaled]
 
     # setting hyperparameters for gradient descent
     learning_rate = 0.001
     iterations = 5000
-    Y_train = Y_train.reshape(-1)
+    Y_train = Y_train.reshape(-1, 1)
     m = len(Y_train)
 
+    theta = np.zeros((X_train_b.shape[1], 1))
     # Loop to upgrade coefficients gradually
-    for i in range(iterations):
+    for _ in range(iterations):
         # calculating the linear steps, then applying the segmoid function
         linear_model = np.dot(X_train_b, theta)
         predictions = sigmoid(linear_model)
