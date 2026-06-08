@@ -1,3 +1,4 @@
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import HistGradientBoostingClassifier
@@ -5,6 +6,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
 import pandas as pd
 import numpy as np
 import os
@@ -36,19 +38,10 @@ print("Zeros replaced with column mean.")
 feature_cols = ['Pregnancies', 'Glucose', 'BloodPressure',
                 'Insulin', 'DiabetesPedigreeFunction', 'Age', 'BMI']
 
-# Standardizing each column using Z-score
-# for col in feature_cols:
-#     diabetes_df[col] = (diabetes_df[col] -
-#                         diabetes_df[col].mean() / diabetes_df[col].std())
 
 # Splitting my dataset to seperate the target from the features and converting to numpy arrays
 x = diabetes_df.drop(columns=['Outcome']).values
 y = diabetes_df['Outcome'].values
-
-# Writing the split into seperate files
-# x.to_excel('features_data.xlsx', index=False)
-# y.to_excel('target_data.xlsx', index=False)
-# print("Feature and target saved to different file.")
 
 
 # Splitted the test data 20% and train data 80%
@@ -56,39 +49,33 @@ X_train, X_test, Y_train, Y_test = train_test_split(
     x, y, test_size=0.2, random_state=84)
 
 # using decision tree
-print("This is the begining of Decision Tree Classifier")
+print("--- This is the begining of Decision Tree Classifier ---")
 model = DecisionTreeClassifier()
 model.fit(X_train, Y_train)
 prediction = model.predict(X_test)
 score = accuracy_score(Y_test, prediction)
-print(f"This is the Accuracy Score for Decision Tree{score}")
+print(f"This is the Accuracy Score for Decision Tree {score}")
 
+# Scaling the input features down to better match with the outcome variable
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Adding the intercept
-X_train_b = np.c_[np.ones((len(X_train_scaled), 1)), X_train_scaled]
-X_test_b = np.c_[np.ones((len(X_test_scaled), 1)), X_test_scaled]
+# This is the beginning of Linear Regression
+print("--- Regression Begins ---")
+model_reg = LinearRegression()
+model_reg.fit(X_train_scaled, Y_train)
+prediction_reg = model_reg.predict(X_test_scaled)
+mse = mean_squared_error(Y_test, prediction_reg)
 
-# Fitting the model to normal equation
-best_fit_theta = np.linalg.inv(X_train_b.T.dot(
-    X_train_b)).dot(X_train_b.T).dot(Y_train)
-
-# pridicting with the model by multiplying X_test_b with best_fit_theta
-predictions = X_test_b.dot(best_fit_theta)
-
-# Calculating the mean square error
-mse = np.mean((Y_test - predictions) ** 2)
-
-
-print("Regression model trained from scratch")
-print(f"-> Calculated the coefficient: {best_fit_theta}")
 print(f"-> Mean Square Error: {mse:.3f}")
+print(f"R-square score: {r2_score(Y_test, prediction_reg):.3f}")
+print(f"Coefficients: {model_reg.coef_}")
+print(f"Intercept: {model_reg.intercept_}")
 
 
 # logit beginning
-print("This is the beginning of Logistic Regression")
+print("--- This is the beginning of Logistic Regression ---")
 
 
 def sigmoid(z):
@@ -139,7 +126,7 @@ print(f"-> Model Accuracy {accuracy * 100:.3f}%")
 
 
 # Random forest model
-print("This is the beginning of random forest!")
+print("--- This is the beginning of random forest! ---")
 
 
 param_grid = {
@@ -169,7 +156,7 @@ print(f"Best Parameters: {best_tuned_params}")
 print(f"Random Forest Model Accuracy: {randfor_accuracy:.3f}%")
 
 
-print("This is the beginning of gradient boosting")
+print("--- This is the beginning of gradient boosting ---")
 grad_boosting_model = HistGradientBoostingClassifier(
     random_state=84, max_iter=100)
 
