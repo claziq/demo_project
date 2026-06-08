@@ -1,3 +1,5 @@
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
@@ -21,13 +23,6 @@ columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
            'Insulin', 'DiabetesPedigreeFunction', 'Age', 'BMI', 'Outcome']
 diabetes_df = pd.DataFrame(diabetes_df, columns=columns)
 
-# List of columns with 0s in them which is not possible(medically)
-# columns_with_zeros = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin']
-
-# for col in columns_with_zeros:
-#     diabetes_df.loc[diabetes_df.sample(frac=0.1).index, col] = 0
-# print("Data loaded and prepared")
-
 
 # Converting the 0s into column mean for the column with impossible 0s
 columns_to_fix = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin']
@@ -38,36 +33,35 @@ for col in columns_to_fix:
     diabetes_df[col] = diabetes_df[col].fillna(column_mean)
 print("Zeros replaced with column mean.")
 
-# Standardizing each column using Z-score
 feature_cols = ['Pregnancies', 'Glucose', 'BloodPressure',
                 'Insulin', 'DiabetesPedigreeFunction', 'Age', 'BMI']
 
+# Standardizing each column using Z-score
 # for col in feature_cols:
 #     diabetes_df[col] = (diabetes_df[col] -
 #                         diabetes_df[col].mean() / diabetes_df[col].std())
 
-# Splitting my dataset to seperate the target from the features
-x_df = diabetes_df.iloc[:, :7]
-y_df = diabetes_df.iloc[:, 8:9]
+# Splitting my dataset to seperate the target from the features and converting to numpy arrays
+x = diabetes_df.drop(columns=['Outcome']).values
+y = diabetes_df['Outcome'].values
 
 # Writing the split into seperate files
-# x_df.to_excel('features_data.xlsx', index=False)
-# y_df.to_excel('target_data.xlsx', index=False)
-print("Feature and target saved to different file.")
+# x.to_excel('features_data.xlsx', index=False)
+# y.to_excel('target_data.xlsx', index=False)
+# print("Feature and target saved to different file.")
 
-# Converting the pandas dataframe into numpy array
-x = x_df.values
-y = y_df.values
 
 # Splitted the test data 20% and train data 80%
-indices = np.random.permutation(len(x))
-test_size = int(len(x) * 0.2)
-test_indices = indices[: test_size]
-train_indices = indices[test_size:]
+X_train, X_test, Y_train, Y_test = train_test_split(
+    x, y, test_size=0.2, random_state=84)
 
-# test data 20% and train data 80%
-X_train, X_test = x[train_indices], x[test_indices]
-Y_train, Y_test = y[train_indices], y[test_indices]
+# using decision tree
+print("This is the begining of Decision Tree Classifier")
+model = DecisionTreeClassifier()
+model.fit(X_train, Y_train)
+prediction = model.predict(X_test)
+score = accuracy_score(Y_test, prediction)
+print(f"This is the Accuracy Score for Decision Tree{score}")
 
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
