@@ -3,10 +3,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression
 import pandas as pd
 import numpy as np
 import os
@@ -77,52 +77,14 @@ print(f"Intercept: {model_reg.intercept_}")
 # logit beginning
 print("--- This is the beginning of Logistic Regression ---")
 
-
-def sigmoid(z):
-    z = np.clip(z, -500, 500)
-    return 1 / (1 + np.exp(-z))
-
-
-X_train_b = np.c_[np.ones((len(X_train), 1)), X_train]
-X_test_b = np.c_[np.ones((len(X_test), 1)), X_test]
-
-
-# setting hyperparameters for gradient descent
-learning_rate = 0.001
-iterations = 5000
-Y_train = Y_train.reshape(-1)
-m = len(Y_train)
-
-# Initializing the coefficient to zero
-theta = np.zeros(X_train_b.shape[1])
-
-
-# Loop to upgrade coefficients gradually
-for i in range(iterations):
-    # calculating the linear steps, then applying the segmoid function
-    linear_model = np.dot(X_train_b, theta)
-    predictions = sigmoid(linear_model)
-    # calculating the gradient
-    # (1/m) * X^T * (predictions - actual). the formula calculating the gradient descent
-    gradient = np.dot(X_train_b.T, (predictions - Y_train)) / m
-
-    # we have to update the coefficient by taking a step in the opposite direction of the gradinet
-    theta -= learning_rate * gradient
-
-
-# get the probability for the test
-test_linear_model = np.dot(X_test_b, theta)
-test_probabilities = sigmoid(test_linear_model)
-
-# convert probabilities to strict 0 and 1 predictions
-final_prediction = (test_probabilities >= 0.5).astype(int)
-
-# checking for the acuracy using Accuracy(percentage correct)
-accuracy = np.mean(final_prediction == Y_test)
-
-print("Logit regression model trained via Gradient descent.")
-print(f"-> Calculated Coefficients {theta}")
-print(f"-> Model Accuracy {accuracy * 100:.3f}%")
+log_model = LogisticRegression(class_weight='balanced')
+log_model.fit(X_train_scaled, Y_train)
+log_predict = log_model.predict(X_test_scaled)
+print(f"Predicted classes: {log_predict}")
+log_score = accuracy_score(Y_test, log_predict)
+print(f"logistics scores: {log_score:.3f}")
+print("\nDetailed Report:\n", classification_report(Y_test, log_predict))
+print(f"-> Model Coefficient {log_model.coef_}")
 
 
 # Random forest model
