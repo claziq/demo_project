@@ -85,6 +85,8 @@ log_score = accuracy_score(Y_test, log_predict)
 print(f"logistics scores: {log_score:.3f}")
 print("\nDetailed Report:\n", classification_report(Y_test, log_predict))
 print(f"-> Model Coefficient {log_model.coef_}")
+cm = confusion_matrix(Y_test, log_predict)
+print("\nThis is the Confusion Matrix\n", cm)
 
 
 # Random forest model
